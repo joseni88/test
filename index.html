@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IAmenara — Simplificando el aprendizaje</title>
+
+  <!-- Fuente opcional (puedes quitarla si no tienes conexión) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b0f14;
+      --fg: #e8f0ff;
+      --muted: #9db4d6;
+      --brand1: #6bc1ff;
+      --brand2: #a07bff;
+      --brand3: #29ffc6;
+      --glass: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+      background: radial-gradient(1200px 600px at 80% 10%, #101827 0%, #0b0f14 60%), var(--bg);
+      color: var(--fg);
+      overflow: hidden;
+    }
+
+    /* Fondo animado con blobs */
+    .bg {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .blob {
+      position: absolute;
+      width: 38vmin;
+      height: 38vmin;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.55;
+      mix-blend-mode: screen;
+    }
+    .b1 { background: radial-gradient(circle at 30% 30%, var(--brand1), transparent 60%); top: 10%; left: -10%; }
+    .b2 { background: radial-gradient(circle at 70% 40%, var(--brand2), transparent 60%); top: 40%; right: -12%; }
+    .b3 { background: radial-gradient(circle at 40% 60%, var(--brand3), transparent 60%); bottom: -10%; left: 20%; width: 44vmin; height: 44vmin; }
+
+    /* Contenido principal */
+    .hero {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 6vmin 4vmin;
+      text-align: center;
+    }
+
+    .stack {
+      max-width: 1100px;
+      width: min(92vw, 1100px);
+      display: grid;
+      gap: 1.2rem;
+      align-items: center;
+      justify-items: center;
+    }
+
+    h1#title {
+      margin: 0;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      font-size: clamp(2.8rem, 8.5vw, 6.5rem);
+      background: conic-gradient(from 160deg at 50% 50%, var(--brand1), var(--brand2), var(--brand3), var(--brand1));
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 6px 24px rgba(32, 118, 255, 0.18);
+      cursor: default;
+      user-select: none;
+      white-space: nowrap;
+    }
+    h1#title .letter {
+      display: inline-block; /* necesario para animar por letra */
+      will-change: transform, opacity;
+    }
+
+    .underline {
+      width: 0%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--brand1), var(--brand2), var(--brand3));
+      border-radius: 999px;
+      box-shadow: 0 0 22px rgba(92, 146, 255, 0.45);
+      margin-top: 2px;
+    }
+
+    h2#subtitle {
+      margin: 0;
+      font-weight: 500;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2.8vw, 1.6rem);
+      letter-spacing: 0.2px;
+    }
+    h2#subtitle .letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(10px);
+      will-change: transform, opacity;
+    }
+
+    .cta {
+      margin-top: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.85rem 1.15rem;
+      font-weight: 600;
+      color: var(--fg);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      border-radius: 16px;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.04),
+        0 10px 30px rgba(0,0,0,0.25);
+      backdrop-filter: blur(10px);
+      transform: translateY(6px);
+      opacity: 0;
+      transition: transform 260ms ease, box-shadow 260ms ease, background 260ms ease;
+      will-change: transform;
+    }
+    .btn:hover {
+      transform: translateY(2px) scale(1.02);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 16px 40px rgba(0, 90, 255, 0.25);
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    }
+    .btn .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--brand1), var(--brand2));
+      box-shadow: 0 0 14px rgba(95, 161, 255, 0.65);
+    }
+
+    .credits {
+      position: fixed;
+      z-index: 2;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: rgba(232,240,255,0.6);
+      letter-spacing: 0.3px;
+      user-select: none;
+    }
+
+    /* Preferencia de usuario: reducir movimiento */
+    @media (prefers-reduced-motion: reduce) {
+      .blob { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <main class="hero">
+    <section class="stack">
+      <h1 id="title">IAmenara</h1>
+      <div class="underline" aria-hidden="true"></div>
+      <h2 id="subtitle">Simplificando el aprendizaje</h2>
+      <div class="cta">
+        <a class="btn" href="#" id="btn">
+          <span class="dot" aria-hidden="true"></span>
+          Comenzar
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div class="credits">Hecho con anime.js</div>
+
+  <!-- anime.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-9mP4wY7YwZ9Z6G3k+I3dXGFykd4QJQF4m39C1V7C6HPZQ1g1Q0ZpP2WwXfR3q7v6xg8lYrN9mHkG8R9m2Hn6dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    // Función: envuelve cada letra del elemento en <span class="letter">
+    function wrapLetters(el) {
+      const text = el.textContent; // respetamos espacios
+      const letters = text.split('');
+      el.innerHTML = letters.map(ch => {
+        if (ch === ' ') return '<span class="letter" style="width:0.35em;">&nbsp;</span>';
+        return `<span class="letter">${ch}</span>`;
+      }).join('');
+      return el.querySelectorAll('.letter');
+    }
+
+    const tEl = document.getElementById('title');
+    const sEl = document.getElementById('subtitle');
+
+    const titleLetters = wrapLetters(tEl);
+    const subtitleLetters = wrapLetters(sEl);
+
+    // Timeline de entrada
+    const tl = anime.timeline({ autoplay: true });
+
+    tl.add({
+      targets: titleLetters,
+      translateY: [56, 0],
+      opacity: [0, 1],
+      scale: [0.9, 1],
+      rotate: [3, 0],
+      duration: 1100,
+      delay: anime.stagger(70),
+      easing: 'easeOutExpo'
+    })
+    .add({
+      targets: '.underline',
+      width: ['0%', '100%'],
+      duration: 900,
+      easing: 'easeOutExpo'
+    }, '-=600')
+    .add({
+      targets: subtitleLetters,
+      opacity: [0, 1],
+      translateY: [16, 0],
+      duration: 650,
+      delay: anime.stagger(22),
+      easing: 'easeOutCubic'
+    }, '-=200')
+    .add({
+      targets: '#btn',
+      opacity: [0, 1],
+      translateY: [16, 0],
+      duration: 600,
+      easing: 'easeOutBack'
+    }, '-=300');
+
+    // Animación de blobs del fondo (movimiento suave)
+    anime({
+      targets: '.b1',
+      translateX: [{ value: 60 }, { value: -30 }, { value: 0 }],
+      translateY: [{ value: -20 }, { value: 30 }, { value: 0 }],
+      scale: [{ value: 1.1 }, { value: 0.95 }, { value: 1 }],
+      duration: 13000,
+      direction: 'alternate',
+      loop: true,
+      easing: 'easeInOutSine'
+    });
+    anime({
+      targets: '.b2',
+      translateX: [{ value: -50 }, { value: 30 }, { value: 0 }],
+      translateY: [{ value: 30 }, { value: -40 }, { value: -10 }],
+      scale: [{ value: 1.05 }, { value: 1.18 }, { value: 1 }],
+      duration: 15000,
+      direction: 'alternate',
+      loop: true,
+      easing: 'easeInOutSine'
+    });
+    anime({
+      targets: '.b3',
+      translateX: [{ value: 40 }, { value: -20 }, { value: 0 }],
+      translateY: [{ value: -10 }, { value: 20 }, { value: 0 }],
+      scale: [{ value: 0.95 }, { value: 1.12 }, { value: 1 }],
+      duration: 16000,
+      direction: 'alternate',
+      loop: true,
+      easing: 'easeInOutSine'
+    });
+
+    // Micro-interacciones: ondular letras al pasar el cursor
+    titleLetters.forEach((span, i) => {
+      span.style.cursor = 'default';
+      span.addEventListener('mouseenter', () => {
+        anime({
+          targets: span,
+          translateY: [{ value: -10, duration: 180, easing: 'easeOutQuad' }, { value: 0, duration: 420, easing: 'easeOutCubic' }],
+          scale: [{ value: 1.06, duration: 180 }, { value: 1, duration: 420 }],
+          rotate: [{ value: anime.random(-6, 6), duration: 180 }, { value: 0, duration: 420 }],
+        });
+      });
+    });
+
+    // Botón: pulso suave infinito
+    anime({
+      targets: '#btn .dot',
+      scale: [{ value: 1 }, { value: 1.25 }, { value: 1 }],
+      boxShadow: [
+        { value: '0 0 10px rgba(95,161,255,0.55)' },
+        { value: '0 0 20px rgba(95,161,255,0.95)' },
+        { value: '0 0 10px rgba(95,161,255,0.55)' }
+      ],
+      duration: 2000,
+      easing: 'easeInOutSine',
+      loop: true
+    });
+
+    // Accesibilidad: reducir animaciones si el usuario lo prefiere
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) {
+      anime.remove('.b1, .b2, .b3, #btn .dot');
+    }
+  </script>
+</body>
+</html>
